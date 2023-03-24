@@ -4,8 +4,8 @@ export function Filter({ onFilter, state }) {
   return (
     <div className={css.filter}>
       <h2>Contacts</h2>
-      Find contacts by name
       <label className={css.label} htmlFor="">
+        Find contacts by name
         <input
           className={css.input}
           onInput={onFilter}

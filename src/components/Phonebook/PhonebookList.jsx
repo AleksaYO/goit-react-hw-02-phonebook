@@ -1,24 +1,19 @@
 import css from './Phonebook.module.css';
-import { Filter } from './Filter';
 
-export function PhonebookList({ state, onFilter, onDelete }) {
-  const newArr = state.contacts.filter(
+export function PhonebookList({ state: { contacts, filter }, onDelete }) {
+  const newArr = contacts.filter(
     item =>
-      item.name.toLowerCase().includes(state.filter.toLowerCase()) ||
-      item.number.includes(state.filter)
+      item.name.toLowerCase().includes(filter.toLowerCase()) ||
+      item.number.includes(filter)
   );
   return (
     <>
-      {state.contacts.length > 0 && (
-        <Filter state={state} onFilter={onFilter} />
-      )}
-
       <ul className={css.list}>
         {newArr.map(item => {
           return (
             <li id={item.id} key={item.id}>
               {item.name}: {item.number}
-              <button onClick={onDelete}>Удалить</button>
+              <button onClick={() => onDelete(item.id)}>Удалить</button>
             </li>
           );
         })}

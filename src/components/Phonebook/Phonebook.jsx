@@ -3,6 +3,7 @@ import { nanoid } from 'nanoid';
 import { PhonebookList } from './PhonebookList';
 import { Form } from './Form';
 import { Notify } from 'notiflix';
+import { Filter } from './Filter';
 
 export class Phonebook extends React.Component {
   state = {
@@ -46,10 +47,9 @@ export class Phonebook extends React.Component {
     }));
   };
 
-  onDelete = e => {
-    const elem = e.target.parentElement.id;
+  onDelete = id => {
     this.setState(prev => ({
-      contacts: prev.contacts.filter(item => item.id !== elem),
+      contacts: prev.contacts.filter(item => item.id !== id),
     }));
   };
 
@@ -65,11 +65,10 @@ export class Phonebook extends React.Component {
           onSubmit={this.onSubmit}
           state={this.state}
         />
-        <PhonebookList
-          state={this.state}
-          onFilter={this.onFilter}
-          onDelete={this.onDelete}
-        />
+        {this.state.contacts.length > 0 && (
+          <Filter state={this.state} onFilter={this.onFilter} />
+        )}
+        <PhonebookList state={this.state} onDelete={this.onDelete} />
       </>
     );
   }
