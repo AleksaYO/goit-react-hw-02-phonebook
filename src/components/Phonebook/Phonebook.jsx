@@ -1,45 +1,77 @@
 import React from 'react';
 import { nanoid } from 'nanoid';
 import { PhonebookList } from './PhonebookList';
+import css from './Phonebook.module.css';
+import { Form } from './Form';
+import { Notify } from 'notiflix';
 
 export class Phonebook extends React.Component {
   state = {
     contacts: [],
     name: '',
+    number: '',
+    filter: '',
   };
 
   onChange = e => {
-    this.setState({ name: e.target.value });
+    this.setState({ [e.target.name]: e.target.value });
   };
 
   onSubmit = e => {
     e.preventDefault();
+    const oldObj = this.state.contacts.find(
+      item => item.name === this.state.name && item.number === this.state.number
+    );
+    if (this.state.contacts.includes(oldObj)) {
+      Notify.failure('Контакт с таким номером уже есть в списке');
+      return;
+    }
+
     this.setState(prev => ({
-      contacts: [{ name: this.state.name, id: nanoid() }, ...prev.contacts],
+      contacts: [
+        {
+          name: this.state.name,
+          number: this.state.number,
+          id: nanoid(),
+        },
+        ...prev.contacts,
+      ],
     }));
+
     this.reset();
   };
 
+  onFilter = e => {
+    this.setState(() => ({
+      filter: e.target.value,
+    }));
+  };
+
+  onDelete = e => {
+    this.setState(prev => ({
+      contacts: prev.contacts.filter(
+        item => item.id !== e.target.parentElement.id
+      ),
+    }));
+  };
+
   reset = () => {
-    this.setState({ name: '' });
+    this.setState({ name: '', number: '' });
   };
 
   render() {
     return (
       <>
-        <form onSubmit={this.onSubmit}>
-          <input
-            onChange={this.onChange}
-            type="text"
-            name="name"
-            value={this.state.name}
-            pattern="^[a-zA-Zа-яА-Я]+(([' -][a-zA-Zа-яА-Я ])?[a-zA-Zа-яА-Я]*)*$"
-            title="Name may contain only letters, apostrophe, dash and spaces. For example Adrian, Jacob Mercer, Charles de Batz de Castelmore d'Artagnan"
-            required
-          />
-          <button type="submit">Add Contact</button>
-        </form>
-        <PhonebookList state={this.state} />
+        <Form
+          onChange={this.onChange}
+          onSubmit={this.onSubmit}
+          state={this.state}
+        />
+        <PhonebookList
+          state={this.state}
+          onFilter={this.onFilter}
+          onDelete={this.onDelete}
+        />
       </>
     );
   }
