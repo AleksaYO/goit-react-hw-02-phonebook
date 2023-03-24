@@ -1,7 +1,6 @@
 import React from 'react';
 import { nanoid } from 'nanoid';
 import { PhonebookList } from './PhonebookList';
-import css from './Phonebook.module.css';
 import { Form } from './Form';
 import { Notify } from 'notiflix';
 
@@ -48,10 +47,9 @@ export class Phonebook extends React.Component {
   };
 
   onDelete = e => {
+    const elem = e.target.parentElement.id;
     this.setState(prev => ({
-      contacts: prev.contacts.filter(
-        item => item.id !== e.target.parentElement.id
-      ),
+      contacts: prev.contacts.filter(item => item.id !== elem),
     }));
   };
 
