@@ -8,7 +8,9 @@ export function Filter({ onFilter, state }) {
         Find contacts by name
         <input
           className={css.input}
-          onInput={onFilter}
+          onInput={e => {
+            onFilter(e.target.value);
+          }}
           name="text"
           type="text"
           value={state.filter}

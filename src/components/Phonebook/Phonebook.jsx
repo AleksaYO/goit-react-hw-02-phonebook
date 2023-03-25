@@ -1,49 +1,24 @@
 import React from 'react';
-import { nanoid } from 'nanoid';
 import { PhonebookList } from './PhonebookList';
 import { Form } from './Form';
-import { Notify } from 'notiflix';
 import { Filter } from './Filter';
+import { nanoid } from 'nanoid';
+import { Notify } from 'notiflix';
 
 export class Phonebook extends React.Component {
   state = {
-    contacts: [],
-    name: '',
-    number: '',
+    contacts: [
+      { id: 'id-1', name: 'Rosie Simpson', number: '459-12-56' },
+      { id: 'id-2', name: 'Hermione Kline', number: '443-89-12' },
+      { id: 'id-3', name: 'Eden Clements', number: '645-17-79' },
+      { id: 'id-4', name: 'Annie Copeland', number: '227-91-26' },
+    ],
     filter: '',
   };
 
-  onChange = e => {
-    this.setState({ [e.target.name]: e.target.value });
-  };
-
-  onSubmit = e => {
-    e.preventDefault();
-    const oldObj = this.state.contacts.find(
-      item => item.name === this.state.name && item.number === this.state.number
-    );
-    if (this.state.contacts.includes(oldObj)) {
-      Notify.failure('Контакт с таким номером уже есть в списке');
-      return;
-    }
-
-    this.setState(prev => ({
-      contacts: [
-        {
-          name: this.state.name,
-          number: this.state.number,
-          id: nanoid(),
-        },
-        ...prev.contacts,
-      ],
-    }));
-
-    this.reset();
-  };
-
-  onFilter = e => {
+  onFilter = value => {
     this.setState(() => ({
-      filter: e.target.value,
+      filter: value,
     }));
   };
 
@@ -53,8 +28,17 @@ export class Phonebook extends React.Component {
     }));
   };
 
-  reset = () => {
-    this.setState({ name: '', number: '' });
+  UpdateContacs = data => {
+    data.id = nanoid();
+
+    if (this.state.contacts.some(item => item.number === data.number)) {
+      Notify.failure('Контакт с таким номером уже существует');
+      return;
+    }
+
+    this.setState(prev => ({
+      contacts: [data, ...prev.contacts],
+    }));
   };
 
   render() {
@@ -63,7 +47,7 @@ export class Phonebook extends React.Component {
         <Form
           onChange={this.onChange}
           onSubmit={this.onSubmit}
-          state={this.state}
+          UpdateContacs={this.UpdateContacs}
         />
         {this.state.contacts.length > 0 && (
           <Filter state={this.state} onFilter={this.onFilter} />
